@@ -1,17 +1,30 @@
-/// This module handles the generation of key pairs for the ZK-SNARK system.
+use rand::rngs::OsRng;
+use rand::RngCore;
+use zeroize::Zeroize;
+use crate::utils::current_timestamp;
 
-pub struct KeyPair {
-    pub proving_key: u64,
-    pub verification_key: u64,
+/// Kriptografik olarak güvenli bir anahtar oluşturur ve zaman damgasını döndürür.
+pub fn generate_key_with_timestamp() -> ([u8; 32], u64) {
+    let mut key = [0u8; 32];
+    OsRng.fill_bytes(&mut key);  // Güvenli anahtar üretimi
+    let timestamp = current_timestamp();
+    (key, timestamp)
 }
 
-/// Generates a proving key and verification key for the ZK-SNARK.
-/// The `lambda` value acts as the secret key.
-pub fn generate_keys(lambda: u64) -> KeyPair {
-    let proving_key = lambda.wrapping_add(1);  // Simple key generation logic
-    let verification_key = lambda.wrapping_sub(1);  // Corresponding verification key
-    KeyPair {
-        proving_key,
-        verification_key,
+/// Anahtarın bellekten güvenli bir şekilde temizlenmesi.
+pub fn clear_key(key: &mut [u8; 32]) {
+    key.zeroize();
+}
+
+/// Süreli anahtar yapısı
+pub struct KeyWithExpiration {
+    pub key: [u8; 32],
+    pub created_at: u64,
+    pub expires_in: u64, // Saniye cinsinden geçerlilik süresi
+}
+
+impl KeyWithExpiration {
+    pub fn is_expired(&self) -> bool {
+        current_timestamp() > (self.created_at + self.expires_in)
     }
 }

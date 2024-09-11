@@ -1,20 +1,27 @@
 [package]
 name = "wasm-zk-snarks"
-version = "0.1.0"
-authors = ["nzengi <zenginureddin1@gmail.com>"]
-description = "A Zero-Knowledge Proof library for generating and verifying ZK-SNARKs."
-license = "MIT"
-repository = "https://github.com/nzengi/wasm-zk-snarks"
-homepage = "https://nzengi.github.io/wasm-zk-snarks"
-documentation = "https://docs.rs/wasm-zk-snarks"
+version = "0.1.1"
 edition = "2021"
+authors = ["nzengi <zenginureddin1@gmail.com>"]
+description = "WASM uyumlu kriptografik anahtar yönetimi kütüphanesi"
+license = "MIT"
 
 [dependencies]
-wasm-bindgen = "0.2.93"
-rand = { version = "0.8", default-features = false, features = ["std", "getrandom"] }
-getrandom = { version = "0.2", features = ["js"] }  # getrandom için 'js' özelliğini ekledik
-sha2 = "0.10"
+rand = "0.8"
+zeroize = "1.4"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+wasm-bindgen = "0.2"
+structopt = "0.3"
 
+[features]
+wasm = []
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+name = "wasm_zk_snarks"
+path = "src/lib.rs"
+crate-type = ["rlib", "cdylib"]
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+criterion = "0.3"  # Benchmarking için
